@@ -1,0 +1,78 @@
+models:
+
+  - name: dim_products
+    description: >
+      One row per product on the Jaffle Shop menu.
+      Contains product name, type (jaffle or beverage), price, and description.
+    columns:
+      - name: sku
+        description: Primary key. Unique product code (e.g. JAF-001, BEV-004).
+        tests:
+          - unique
+          - not_null
+
+      - name: name
+        description: Human-readable product name.
+        tests:
+          - not_null
+
+      - name: type
+        description: Product category — either 'jaffle' or 'beverage'.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['jaffle', 'beverage']
+
+      - name: price
+        description: Retail price in cents (e.g. 1100 = $11.00).
+        tests:
+          - not_null
+
+      - name: description
+        description: Menu description of the product.
+
+  - name: fct_product_sales
+    description: >
+      One row per product. Aggregates total units sold and total revenue
+      across all orders. Use this model to answer which products are most
+      popular and which drive the most revenue.
+    columns:
+      - name: sku
+        description: Primary key. Unique product code.
+        tests:
+          - unique
+          - not_null
+
+      - name: name
+        description: Product name.
+        tests:
+          - not_null
+
+      - name: type
+        description: Product category — jaffle or beverage.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['jaffle', 'beverage']
+
+      - name: price
+        description: Unit price in cents.
+        tests:
+          - not_null
+
+      - name: units_sold
+        description: Total number of units sold across all orders.
+        tests:
+          - not_null
+
+      - name: total_revenue
+        description: Total revenue generated (units_sold x price) in cents.
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> 0"
+              name: assert_positive_revenue
+            
