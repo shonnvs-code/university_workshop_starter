@@ -1,3 +1,5 @@
+version: 2
+
 models:
 
   - name: dim_products
@@ -75,4 +77,38 @@ models:
               arguments:
                 expression: "> 0"
               name: assert_positive_revenue
-            
+
+  - name: fct_store_revenue
+    description: >
+      One row per store. Aggregates total orders and revenue across all orders.
+      Use this to identify which store locations drive the most revenue.
+    columns:
+      - name: store_id
+        description: Primary key. Unique store identifier.
+        tests:
+          - unique
+          - not_null
+
+      - name: store_name
+        description: Human-readable store location name.
+        tests:
+          - not_null
+
+      - name: tax_rate
+        description: Tax rate applied at this store location.
+
+      - name: total_orders
+        description: Total number of orders placed at this store.
+        tests:
+          - not_null
+
+      - name: total_subtotal
+        description: Sum of all order subtotals before tax (cents).
+
+      - name: total_tax_paid
+        description: Sum of all tax paid across orders (cents).
+
+      - name: total_revenue
+        description: Sum of all order totals including tax (cents).
+        tests:
+          - not_null
